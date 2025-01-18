@@ -1,0 +1,109 @@
+{
+    "ut43_icymonster_v1": {
+        "author": "Sysmyks",
+        "jumps": "22",
+        "difficulty": ["60"]
+    },
+    "ut43_obsidian_v8": {
+        "author": "Sysmyks",
+        "jumps": "13",
+        "difficulty": ["50"]
+    },
+    "ut43_aurorace-blue_a1": {
+        "author": "mikeu",
+        "jumps": "1",
+        "difficulty": ["5"]
+    },
+    "ut43_green_solo_v2": {
+        "author": "Quak",
+        "jumps": "17",
+        "difficulty": ["50"]
+    },
+    "ut43_icyproto_b1": {
+        "author": "Sysmyks",
+        "jumps": "5",
+        "difficulty": ["20"]
+    },
+    "ut4_tracia_b1": {
+        "author": "V!0",
+        "jumps": "22",
+        "difficulty": ["55"]
+    },
+    "ut43_icyjumps5d": {
+        "author": "Rambetter",
+        "jumps": "22",
+        "difficulty": ["50"]
+    },
+    "ut42_fun_toxic_b1": {
+        "author": "V!0",
+        "jumps": "9",
+        "difficulty": ["60"]
+    },
+    "ut42_exil_jump": {
+        "author": "V!0",
+        "jumps": "19",
+        "difficulty": ["85"]
+    },
+    "ssmc24-sysmyks-v3": {
+        "author": "Sysmyks",
+        "jumps": "4",
+        "difficulty": ["45"]
+    },
+    "ut43_sphere": {
+        "author": "Vivaldi",
+        "jumps": "16",
+        "difficulty": ["80"]
+    },
+    "ssmc24-lauty_b1": {
+        "author": "Lau",
+        "jumps": "4",
+        "difficulty": ["55"]
+    },
+    "ssmc24-fliro": {
+        "author": "Flirow",
+        "jumps": "4",
+        "difficulty": ["55"]
+    },
+    "ut4_orbit_b1": {
+        "author": "ulbens Vivaldi",
+        "jumps": "7",
+        "difficulty": ["40"]
+    },
+    "ssmc24-biddle_b1": {
+        "author": "Biddle",
+        "jumps": "1",
+        "difficulty": ["25"]
+    },
+    "ut43_icyfunspot": {
+        "author": "Sysmyks and Rootsman",
+        "jumps": "21",
+        "difficulty": ["55"]
+    },
+    "ut43_icyworld1b": {
+        "author": "Rambetter",
+        "jumps": "12",
+        "difficulty": ["50"]
+    },
+    "ut43_icysequel1a": {
+        "author": "Rambetter",
+        "jumps": "28",
+        "difficulty": ["50"]
+    },
+    "ut43_icyjumps5d_extras": {
+        "author": "Rambetter",
+        "jumps": "4",
+        "difficulty": ["60"]
+    },
+    "ut42_bstjumps_u2": {
+        "author": "Moonie",
+        "jumps": "46",
+        "difficulty": ["50"]
+    },
+    "ut4_bstoldveteran_b1": {
+        "author": "Moonie",
+        "jumps": "4",
+        "difficulty": ["45"]
+    }
+
+
+}
