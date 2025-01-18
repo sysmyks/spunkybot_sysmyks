@@ -64,48 +64,48 @@ COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usag
             'register': {'desc': 'register yourself as a basic user', 'syntax': '^7Usage: ^2!register', 'level': 0},
             # user commands, level 1
             'regtest': {'desc': 'display current user status', 'syntax': '^7Usage: ^2!regtest', 'level': 1},
-            'spec': {'desc': 'move yourself to spectator', 'syntax': '^7Usage: ^2!spec', 'level': 1, 'short': 'sp'},
-            'play': {'desc': 'move yourself to spectator', 'syntax': '^7Usage: ^2!spec', 'level': 1, 'short': 'pl'},
-            'goto': {'desc': 'Goto to a specific jump', 'syntax': '^7Usage: ^2!goto', 'level': 1},
-            'glist': {'desc': 'Displays maps saved locations', 'syntax': '^7Usage: ^2!glist', 'level': 1},
-            'time': {'desc': 'display the current server time', 'syntax': '^7Usage: ^2!time', 'level': 1},
-            'ready': {'desc': 'start timer mod', 'syntax': '^7Usage: ^2!ready', 'level': 1, 'short': 'r'},
-            'regainstamina': {'desc': 'active regainstamina', 'syntax': '^7Usage: ^2!regainstamina', 'level': 1, 'short': 'rgs'},
-            'allowgoto': {'desc': 'active your goto', 'syntax': '^7Usage: ^2!allowgoto', 'level': 1, 'short': 'alg'},
-            'transl': {'desc': 'translate into all languages', 'syntax': '^7Usage: ^2!transl <lang> <text>', 'level': 1, 'short': 'tr'},
-            'maps': {'desc': 'display all available maps', 'syntax': '^7Usage: ^2!maps', 'level': 1},
-            'votecycle': {'desc': 'Vote on cycling to the next map', 'syntax': '^7Usage: ^2!votecyclemap', 'level': 1, 'short': 'vc'},
-            'votemap': {'desc': 'Callvote on changing current map', 'syntax': '^7Usage: ^2!votemap or !vm mapname',  'level': 1, 'short': 'vm'},
-            'nextmap': {'desc': 'display the next map in rotation', 'syntax': '^7Usage: ^2!nextmap', 'level': 1},
-            'votenextmap': {'desc': 'Callvote on setting next map', 'syntax': '^7Usage: ^2!votenextmap or !vn mapname',  'level': 1, 'short': 'vn'},
-            'drop': {'desc': 'drop your stuff', 'syntax': '^7Usage: ^2!drop or !dr',  'level': 1, 'short': 'dr'},
-            'mapinfo': {'desc': 'map info', 'syntax': '^7Usage: ^2!mapinfo',  'level': 1},
-            'topruns': {'desc': 'display 3 records runs', 'syntax': '^7Usage: ^2!topruns',  'level': 1},
-            'top': {'desc': 'display your records', 'syntax': '^7Usage: ^2!top',  'level': 1},
+            'spec': {'desc': 'move yourself to spectator', 'syntax': '^7Usage: ^2!spec', 'level': 20, 'short': 'sp'},
+            'play': {'desc': 'move yourself to spectator', 'syntax': '^7Usage: ^2!spec', 'level': 20, 'short': 'pl'},
+            'goto': {'desc': 'Goto to a specific jump', 'syntax': '^7Usage: ^2!goto', 'level': 20},
+            'glist': {'desc': 'Displays maps saved locations', 'syntax': '^7Usage: ^2!glist', 'level': 20},
+            'time': {'desc': 'display the current server time', 'syntax': '^7Usage: ^2!time', 'level': 20},
+            'ready': {'desc': 'start timer mod', 'syntax': '^7Usage: ^2!ready', 'level': 20, 'short': 'r'},
+            'regainstamina': {'desc': 'active regainstamina', 'syntax': '^7Usage: ^2!regainstamina', 'level': 20, 'short': 'rgs'},
+            'allowgoto': {'desc': 'active your goto', 'syntax': '^7Usage: ^2!allowgoto', 'level': 20, 'short': 'alg'},
+            'transl': {'desc': 'translate into all languages', 'syntax': '^7Usage: ^2!transl <lang> <text>', 'level': 20, 'short': 'tr'},
+            'maps': {'desc': 'display all available maps', 'syntax': '^7Usage: ^2!maps', 'level': 20},
+            'votecycle': {'desc': 'Vote on cycling to the next map', 'syntax': '^7Usage: ^2!votecyclemap', 'level': 20, 'short': 'vc'},
+            'votemap': {'desc': 'Callvote on changing current map', 'syntax': '^7Usage: ^2!votemap or !vm mapname',  'level': 20, 'short': 'vm'},
+            'nextmap': {'desc': 'display the next map in rotation', 'syntax': '^7Usage: ^2!nextmap', 'level': 20},
+            'votenextmap': {'desc': 'Callvote on setting next map', 'syntax': '^7Usage: ^2!votenextmap or !vn mapname',  'level': 20, 'short': 'vn'},
+            'drop': {'desc': 'drop your stuff', 'syntax': '^7Usage: ^2!drop or !dr',  'level': 20, 'short': 'dr'},
+            'mapinfo': {'desc': 'map info', 'syntax': '^7Usage: ^2!mapinfo',  'level': 20},
+            'topruns': {'desc': 'display 3 records runs', 'syntax': '^7Usage: ^2!topruns',  'level': 20},
+            'top': {'desc': 'display your records', 'syntax': '^7Usage: ^2!top',  'level': 20},
             
             # moderator commands, level 20
-            'download': {'desc': 'download', 'syntax': '^7Usage: ^2!download <map>', 'level': 20},
-            'setgoto': {'desc': 'set goto point', 'syntax': '^7Usage: ^2!setgoto <jump name>', 'level': 20},
-            'stamina': {'desc': 'g_stamina 1 or 2', 'syntax': '^7Usage: ^2!stamina', 'level': 20},
-            'walljump': {'desc': 'full walljump on/off', 'syntax': '^7Usage: ^2!walljump', 'level': 20},
-            'admintest': {'desc': 'display current admin status', 'syntax': '^7Usage: ^2!admintest', 'level': 20},
-            'country': {'desc': 'get the country of a player', 'syntax': '^7Usage: ^2!country ^7<name>', 'level': 20},
-            'lastmaps': {'desc': 'list the last played maps', 'syntax': '^7Usage: ^2!lastmaps', 'level': 20},
-            'lastvote': {'desc': 'display information about the last called vote', 'syntax': '^7Usage: ^2!lastvote', 'level': 20},
-            'leveltest': {'desc': 'get the admin level for a given player or myself', 'syntax': '^7Usage: ^2!leveltest ^7[<name>]', 'level': 20, 'short': 'lt'},
-            'list': {'desc': 'list all connected players', 'syntax': '^7Usage: ^2!list', 'level': 20},
-            'locate': {'desc': 'display geolocation info of a player', 'syntax': '^7Usage: ^2!locate ^7<name>', 'level': 20, 'short': 'lc'},
-            'mute': {'desc': 'mute or un-mute a player', 'syntax': '^7Usage: ^2!mute ^7<name> [<duration>]', 'level': 20},
-            'nextmap': {'desc': 'display the next map in rotation', 'syntax': '^7Usage: ^2!nextmap', 'level': 20},
-            'poke': {'desc': 'notify a player that he needs to move', 'syntax': '^7Usage: ^2!poke ^7<name>', 'level': 20},
-            'seen': {'desc': 'display when a player was last seen', 'syntax': '^7Usage: ^2!seen ^7<name>', 'level': 20},
-            'startdemo': {'desc': 'start recording of serverside demo', 'syntax': '^7Usage: ^2!startdemo ^7<name>', 'level': 20},
-            'stopdemo': {'desc': 'stop recording of serverside demo', 'syntax': '^7Usage: ^2!stopdemo ^7<name>', 'level': 20},
-            'warn': {'desc': 'warn player', 'syntax': '^7Usage: ^2!warn ^7<name> [<reason>]', 'level': 20, 'short': 'w'},
-            'warninfo': {'desc': 'display how many warnings a player has', 'syntax': '^7Usage: ^2!warninfo ^7<name>', 'level': 20, 'short': 'wi'},
-            'warnremove': {'desc': "remove a player's last warning", 'syntax': '^7Usage: ^2!warnremove ^7<name>', 'level': 20, 'short': 'wr'},
-            'warns': {'desc': 'list the warnings', 'syntax': '^7Usage: ^2!warns', 'level': 20},
-            'warntest': {'desc': 'test a warning', 'syntax': '^7Usage: ^2!warntest ^7<warning>', 'level': 20},
+            'download': {'desc': 'download', 'syntax': '^7Usage: ^2!download <map>', 'level': 40},
+            'setgoto': {'desc': 'set goto point', 'syntax': '^7Usage: ^2!setgoto <jump name>', 'level': 40},
+            'stamina': {'desc': 'g_stamina 1 or 2', 'syntax': '^7Usage: ^2!stamina', 'level': 40},
+            'walljump': {'desc': 'full walljump on/off', 'syntax': '^7Usage: ^2!walljump', 'level': 40},
+            'admintest': {'desc': 'display current admin status', 'syntax': '^7Usage: ^2!admintest', 'level': 40},
+            'country': {'desc': 'get the country of a player', 'syntax': '^7Usage: ^2!country ^7<name>', 'level': 40},
+            'lastmaps': {'desc': 'list the last played maps', 'syntax': '^7Usage: ^2!lastmaps', 'level': 40},
+            'lastvote': {'desc': 'display information about the last called vote', 'syntax': '^7Usage: ^2!lastvote', 'level': 40},
+            'leveltest': {'desc': 'get the admin level for a given player or myself', 'syntax': '^7Usage: ^2!leveltest ^7[<name>]', 'level': 40, 'short': 'lt'},
+            'list': {'desc': 'list all connected players', 'syntax': '^7Usage: ^2!list', 'level': 40},
+            'locate': {'desc': 'display geolocation info of a player', 'syntax': '^7Usage: ^2!locate ^7<name>', 'level': 40, 'short': 'lc'},
+            'mute': {'desc': 'mute or un-mute a player', 'syntax': '^7Usage: ^2!mute ^7<name> [<duration>]', 'level': 40},
+            'nextmap': {'desc': 'display the next map in rotation', 'syntax': '^7Usage: ^2!nextmap', 'level': 40},
+            'poke': {'desc': 'notify a player that he needs to move', 'syntax': '^7Usage: ^2!poke ^7<name>', 'level': 40},
+            'seen': {'desc': 'display when a player was last seen', 'syntax': '^7Usage: ^2!seen ^7<name>', 'level': 40},
+            'startdemo': {'desc': 'start recording of serverside demo', 'syntax': '^7Usage: ^2!startdemo ^7<name>', 'level': 40},
+            'stopdemo': {'desc': 'stop recording of serverside demo', 'syntax': '^7Usage: ^2!stopdemo ^7<name>', 'level': 40},
+            'warn': {'desc': 'warn player', 'syntax': '^7Usage: ^2!warn ^7<name> [<reason>]', 'level': 40, 'short': 'w'},
+            'warninfo': {'desc': 'display how many warnings a player has', 'syntax': '^7Usage: ^2!warninfo ^7<name>', 'level': 40, 'short': 'wi'},
+            'warnremove': {'desc': "remove a player's last warning", 'syntax': '^7Usage: ^2!warnremove ^7<name>', 'level': 40, 'short': 'wr'},
+            'warns': {'desc': 'list the warnings', 'syntax': '^7Usage: ^2!warns', 'level': 40},
+            'warntest': {'desc': 'test a warning', 'syntax': '^7Usage: ^2!warntest ^7<warning>', 'level': 40},
             
             # admin commands, level 40
             'admins': {'desc': 'list all the online admins', 'syntax': '^7Usage: ^2!admins', 'level': 40},
@@ -1051,7 +1051,7 @@ class LogParser(object):
                 # disable welcome message for next rounds
                 player.disable_welcome_msg()
             elif not player.get_registered_user() and not player.get_first_time() and player.get_welcome_msg():
-                self.game.rcon_tell(player_num, "^7Welcome back %s, you are player ^3#%s^7. ^3Type ^2!register ^3in chat to register and save your stats" % (player_name, player_id))
+                self.game.rcon_tell(player_num, "^7Welcome back %s, you are player ^3#%s^7. ^3Type ^2!register ^3in chat to register and watch all commands" % (player_name, player_id))
                 player.disable_welcome_msg()
             elif player.get_first_time() and player.get_welcome_msg():
                 self.game.rcon_tell(player_num, "^7Welcome %s, this must be your first visit, you are player ^3#%s^7. ^3Type ^2!help ^3in chat for help" % (player_name, player_id))
@@ -1633,7 +1633,7 @@ class LogParser(object):
                         self.game.rcon_tell(sar['player_num'], "^7Available commands: ^3%s" % ', ^3'.join(self.clean_cmd_list(self.user_cmds)))
                     # help for mods - additional commands
                     elif self.game.players[sar['player_num']].get_admin_role() == 20:
-                        self.game.rcon_tell(sar['player_num'], "^7Moderator commands: ^3%s" % ', ^3'.join(self.clean_cmd_list(self.mod_cmds)))
+                        self.game.rcon_tell(sar['player_num'], "^7Jumper commands: ^3%s" % ', ^3'.join(self.clean_cmd_list(self.mod_cmds)))
                     # help for admins - additional commands
                     elif self.game.players[sar['player_num']].get_admin_role() == 40:
                         self.game.rcon_tell(sar['player_num'], "^7Admin commands: ^3%s" % ', ^3'.join(self.clean_cmd_list(self.admin_cmds)))
@@ -1648,8 +1648,8 @@ class LogParser(object):
             # register - register yourself as a basic user
             elif sar['command'] == '!register':
                 if not self.game.players[sar['player_num']].get_registered_user():
-                    self.game.players[sar['player_num']].register_user_db(role=1)
-                    self.game.rcon_tell(sar['player_num'], "^3%s ^7put in group User" % self.game.players[sar['player_num']].get_name())
+                    self.game.players[sar['player_num']].register_user_db(role=20 )
+                    self.game.rcon_tell(sar['player_num'], "^3%s ^7put in group Jumper" % self.game.players[sar['player_num']].get_name())
                 else:
                     self.game.rcon_tell(sar['player_num'], "^3%s ^7is already in a higher level group" % self.game.players[sar['player_num']].get_name())
 
@@ -1658,16 +1658,16 @@ class LogParser(object):
                 if self.game.players[sar['player_num']].get_registered_user():
                     self.game.rcon_tell(sar['player_num'], "^7%s [^3@%s^7] is registered since ^3%s" % (self.game.players[sar['player_num']].get_name(), self.game.players[sar['player_num']].get_player_id(), self.game.players[sar['player_num']].get_first_seen_date()))
                 else:
-                    self.game.rcon_tell(sar['player_num'], "^7You are not a registered user.")
+                    self.game.rcon_tell(sar['player_num'], "^7You are not a registered Jumper.")
             
             # drop - drop your stuff
-            elif sar['command'] in ('!drop', '!dr'):
+            elif sar['command'] in ('!drop', '!dr') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['drop']['level']:
                 self.game.send_rcon("spoof %s ut_itemdrop medkit" % (self.game.players[sar['player_num']].get_name()))
                 self.game.send_rcon("spoof %s ut_itemdrop Helmet" % (self.game.players[sar['player_num']].get_name()))
                 self.game.rcon_tell(sar['player_num'], "Drop medkit weapon and Helmet")
             
             # mapinfo
-            elif sar['command'] == '!mapinfo':
+            elif sar['command'] == '!mapinfo' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['mapinfo']['level']:
                 current_map = self.get_current_map()
     
                 if current_map:
@@ -1694,7 +1694,7 @@ class LogParser(object):
                 self.tell_say_message(sar, msg)
 
             # spec - move yourself to spectator
-            elif sar['command'] in ('!spec', '!sp'):
+            elif sar['command'] in ('!spec', '!sp') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['spec']['level']:
                 self.game.send_rcon("stopserverdemo %s " % (self.game.players[sar['player_num']].get_name()))
                 self.cleanup_old_demos()                
                 if self.game.players[sar['player_num']].get_registered_user():
@@ -1705,7 +1705,7 @@ class LogParser(object):
                     self.tell_say_message(sar, msg)
 
             # spec - move yourself back to game
-            elif sar['command'] in ('!play', '!pl'):
+            elif sar['command'] in ('!play', '!pl') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['play']['level']:
                 if self.game.players[sar['player_num']].get_registered_user():
                     self.game.rcon_forceteam(sar['player_num'], 'free')
                 else:
@@ -1713,7 +1713,7 @@ class LogParser(object):
                     self.tell_say_message(sar, msg)
 
             #ready - play timer
-            elif sar['command'] in ('!ready', '!r'):
+            elif sar['command'] in ('!ready', '!r') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['ready']['level']:
                 with self.players_lock:
                     for player in self.game.players.itervalues():
                         game_data = {
@@ -1729,8 +1729,7 @@ class LogParser(object):
                             return
             
             #regainstamina
-            elif sar['command'] in ('!regainstamina', '!rgs'):
-                with self.players_lock:
+            elif sar['command'] in ('!regainstamina', '!rgs') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['regainstamina']['level']:
                     for player in self.game.players.itervalues():
                         game_data = {
                             Player.teams[1]: 0, Player.teams[2]: 0, Player.teams[3]: -1}
@@ -1744,7 +1743,7 @@ class LogParser(object):
                             return
 
             # allowgot
-            elif sar['command'] in ('!allowgoto', '!alg'):
+            elif sar['command'] in ('!allowgoto', '!alg') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['allowgoto']['level']:
                 self.game.send_rcon("spoof %s allowgoto" % (self.game.players[sar['player_num']].get_name()))            
 
             # !transl <lang> <text>
@@ -1826,7 +1825,7 @@ class LogParser(object):
                     self.tell_say_message(sar, msg)
 
             # Commande !topruns
-            elif sar['command'] == '!topruns':
+            elif sar['command'] == '!topruns'and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['topruns']['level']:
                 current_map = self.get_current_map()
                 
                 if current_map:
@@ -1864,7 +1863,7 @@ class LogParser(object):
                     self.tell_say_message(sar, msg)
 
             # Commande !top (affiche uniquement les temps du joueur actuel)
-            elif sar['command'] == '!top':
+            elif sar['command'] == '!top'and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['top']['level']:
                 current_map = self.get_current_map()
                 player_name = self.game.players[sar['player_num']].get_name()
                 
@@ -1887,7 +1886,7 @@ class LogParser(object):
                     self.tell_say_message(sar, msg)
 
                         # Commande !glist
-            elif sar['command'] == '!glist':
+            elif sar['command'] == '!glist'and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['glist']['level']:
                 current_map = self.get_current_map()
 
                 if current_map:
