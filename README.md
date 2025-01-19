@@ -9,7 +9,10 @@ and install modules for pip.
 configure ligne 215 in spunky_sysmyks_mod_v4.py  
   >self.records_file = 'mod/jump_records.json'  
   >self.json_path = "mod/goto/"  
-  >self.mapinfo = 'mod/mapinfo.json'  
+  >self.mapinfo = 'mod/mapinfo.json'
 
-configure settings.cfg and execute! 
+configure your api-key openai ligne 7 in /mod/translation.py 
+ >client = openai.Client(api_key="")
+
+configure conf/settings.cfg and execute! 
 
