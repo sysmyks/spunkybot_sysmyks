@@ -1,5 +1,5 @@
 # update-spunkybot
-sources spunkybot : https://github.com/SpunkyBot/spunkybot  
+https://github.com/SpunkyBot/spunkybot  
 version v1.13.0
 
 add: !top, !topruns, !transl, !glist, !goto and other.  
