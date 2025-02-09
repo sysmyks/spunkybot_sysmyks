@@ -18,7 +18,9 @@
    client = openai.Client(api_key="your-api-key-here")
    ```
 2. Configure **conf/settings.cfg** according to your server setup.
-3. Execute the bot and enjoy!
+3. Ensure you have a `mapcycle.txt` file for the bot to function properly.
+4. Set the correct path to `mapcycle.txt` in **conf/settings.cfg**.
+5. Execute the bot and enjoy!
 
 ---
 🚀 **Optimized for a better Urban Terror server experience!**
