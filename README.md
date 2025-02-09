@@ -1,4 +1,4 @@
-# update-spunkybot
+# Sysmyks-spunkybot
 
 [SpunkyBot Repository](https://github.com/SpunkyBot/spunkybot)  
 **Version: v1.13.0**
