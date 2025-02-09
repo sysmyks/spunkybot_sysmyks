@@ -1,4 +1,4 @@
-# Spunkybot_Sysmyks
+# update-spunkybot
 
 [SpunkyBot Repository](https://github.com/SpunkyBot/spunkybot)  
 **Version: v1.13.0**
@@ -20,7 +20,8 @@
 2. Configure **conf/settings.cfg** according to your server setup.
 3. Ensure you have a `mapcycle.txt` file for the bot to function properly.
 4. Set the correct path to `mapcycle.txt` in **conf/settings.cfg**.
-5. Execute the bot and enjoy!
+5. To add a new map, it must be listed in `mapcycle.txt`.
+6. Execute the bot and enjoy!
 
 ---
 🚀 **Optimized for a better Urban Terror server experience!**
