@@ -1,14 +1,24 @@
 # update-spunkybot
-https://github.com/SpunkyBot/spunkybot  
-version v1.13.0
 
-add : !top, !topruns, !transl, !glist, !goto, !setgoto, delgoto,  and other.  
-you need python2.7 for spunkybot ans python3 for translation mod,  
-and install modules for pip. 
+[SpunkyBot Repository](https://github.com/SpunkyBot/spunkybot)  
+**Version: v1.13.0**
 
-configure your api-key openai ligne 7 in /mod/translation.py 
- >client = openai.Client(api_key="")
+## New Features & Commands
+- **Added Commands:** `!top`, `!topruns`, `!transl`, `!glist`, `!goto`, `!setgoto`, `delgoto`, and more.
+- Improved functionality and compatibility with **ioq3_sysmyks**.
 
-it is made to work with ioq3_sysmyks
-configure conf/settings.cfg and execute! 
+## Requirements
+- **Python 2.7** for SpunkyBot.
+- **Python 3** for the translation module.
+- Required Python modules (install using `pip`).
 
+## Configuration
+1. Set up your **OpenAI API key** in `mod/translation.py` (line 7):
+   ```python
+   client = openai.Client(api_key="your-api-key-here")
+   ```
+2. Configure **conf/settings.cfg** according to your server setup.
+3. Execute the bot and enjoy!
+
+---
+🚀 **Optimized for a better Urban Terror server experience!**
