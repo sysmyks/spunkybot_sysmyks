@@ -4,7 +4,7 @@
 **Version: v1.13.0**
 
 ## New Features & Commands
-- **Added Commands:** `!top`, `!topruns`, `!transl`, `!glist`, `!goto`, `!setgoto`, `delgoto`, and more.
+- **Added Commands:** `!top`, `!topruns`, `!transl`, `!glist`, `!goto`, `!setgoto`, `!delgoto`, and more.
 - Improved functionality and compatibility with **ioq3_sysmyks**.
 
 ## Requirements
