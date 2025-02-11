@@ -93,7 +93,6 @@ COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usag
             
             # moderator commands, level 20
             'download': {'desc': 'download', 'syntax': '^7Usage: ^9!download <map>', 'level': 40},
-            'setgoto': {'desc': 'set goto point', 'syntax': '^7Usage: ^9!setgoto <jump name>', 'level': 40},
             'g_stamina': {'desc': 'g_stamina 1 or 2', 'syntax': '^7Usage: ^9!g_stamina', 'level': 40},
             'g_walljump': {'desc': 'g_walljump', 'syntax': '^7Usage: ^9!g_walljump', 'level': 40},
             'admintest': {'desc': 'display current admin status', 'syntax': '^7Usage: ^9!admintest', 'level': 40},
@@ -115,6 +114,9 @@ COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usag
             'warns': {'desc': 'list the warnings', 'syntax': '^7Usage: ^9!warns', 'level': 40},
             'warntest': {'desc': 'test a warning', 'syntax': '^7Usage: ^9!warntest ^7<warning>', 'level': 40},
             'delgoto': {'desc': 'delete goto point', 'syntax': '^7Usage: ^9!delgoto ^7<goto_name>', 'level': 40},
+            'setgoto': {'desc': 'set goto point', 'syntax': '^7Usage: ^9!setgoto <jump name>', 'level': 40},
+            'setmapinfo': {'desc': 'set info for a map', 'syntax': '^7Usage: ^9!setmapinfo <mapname> <difficulty> <num_jumps> <author(s)>', 'level': 40},
+            'delmapinfo': {'desc': 'del info for a map', 'syntax': '^7Usage: ^9!delmapinfo <mapname>', 'level': 40},
 
             # admin commands, level 40
             'admins': {'desc': 'list all the online admins', 'syntax': '^7Usage: ^9!admins', 'level': 40},
@@ -650,7 +652,53 @@ class LogParser(object):
                         gameplayer.clear_specific_warning('fix your ping')
     
     #sysmyks topruns
+    def save_map_info(self, map_name, author, jumps, difficulty):
+        """Save map info to the mapinfo.json file"""
+        if os.path.exists(self.mapinfo):
+            try:
+                with open(self.mapinfo, 'r') as f:
+                    maps_data = json.load(f)
+            except json.JSONDecodeError:
+                maps_data = {}
+        else:
+            maps_data = {}
+            
+        maps_data[map_name] = {
+            "author": author,
+            "jumps": jumps,
+            "difficulty": [difficulty, ""]  # Format attendu par !mapinfo
+        }
     
+        try:
+            with open(self.mapinfo, 'w') as f:
+                json.dump(maps_data, f, indent=4)
+            return True
+        except Exception as e:
+            logger.error("Error saving map info: %s", e)
+            return False
+    
+    def delete_map_info(self, map_name):
+        """Delete map info from the mapinfo.json file"""
+        if os.path.exists(self.mapinfo):
+            try:
+                with open(self.mapinfo, "r") as file:
+                    maps_data = json.load(file)
+                    
+                if map_name in maps_data:
+                    del maps_data[map_name]
+                    
+                    with open(self.mapinfo, "w") as file:
+                        json.dump(maps_data, file, indent=4, sort_keys=True)
+                    return True
+                else:
+                    return False
+                    
+            except Exception as e:
+                logger.error("Error deleting map info: %s", str(e))
+                return False
+        else:
+            logger.error("mapinfo.json not found")
+            return False
     
     def delete_position_from_json(self, sar, jump_name):
         """
@@ -1149,7 +1197,7 @@ class LogParser(object):
             logger.debug("ClientDisconnect: Player %d %s has left the game", player_num, player_name)
             
             if self.game.get_number_players() <= 0:
-                self.game.send_rcon("timelimit 10")    
+                self.game.send_rcon("timelimit 30")    
                 
     #sysmyks topruns
     def handle_jump_run_started(self, line):
@@ -2184,6 +2232,52 @@ class LogParser(object):
                 except Exception as e:
                     self.tell_say_message(sar, "^8Error processing !setgoto: {}".format(e))
 
+            # Dans la partie handle_say, ajouter:
+            elif sar['command'] == '!setmapinfo' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['setmapinfo']['level']:
+                args = line.split(sar['command'])[1].strip().split(' ', 3)  # Split en 4 parties max
+                if len(args) >= 4:
+                    map_name = args[0]
+                    difficulty = args[1]
+                    num_jumps = args[2]
+                    author = args[3]  # Le reste est considéré comme author(s)
+                    
+                    if difficulty.isdigit() and 0 <= int(difficulty) <= 100:
+                        if num_jumps.isdigit():
+                            # Vérifier si la map existe
+                            found, map_name, msg = self.map_found(map_name)
+                            if not found:
+                                msg = "^8Map not found: {}".format(map_name)
+                            else:
+                                if self.save_map_info(map_name, author.strip(), int(num_jumps), int(difficulty)):
+                                    msg = "^7Map info saved for ^9{}: ^7Difficulty: ^9{}/100, ^7Jumps: ^9{}, ^7Author(s): ^9{}".format(
+                                        map_name, difficulty, num_jumps, author)
+                                else:
+                                    msg = "^8Error saving map info"
+                        else:
+                            msg = "^8Number of jumps must be a number"
+                    else:
+                        msg = "^8Difficulty must be a number between 0 and 100"
+                else:
+                    msg = COMMANDS['setmapinfo']['syntax']
+        
+                self.tell_say_message(sar, msg)
+
+            elif sar['command'] == '!delmapinfo' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['delmapinfo']['level']:
+                if line.split(sar['command'])[1]:
+                    map_name = line.split(sar['command'])[1].strip()
+                    # Vérifier si la map existe
+                    found, map_name, msg = self.map_found(map_name)
+                    if not found:
+                        msg = "^8Map not found: {}".format(map_name)
+                    else:
+                        if self.delete_map_info(map_name):
+                            msg = "^7Map info deleted for ^9{}".format(map_name)
+                        else:
+                            msg = "^8No info found for map {}".format(map_name) 
+                else:
+                    msg = COMMANDS['delmapinfo']['syntax']
+                
+                self.tell_say_message(sar, msg)
             
             elif sar['command'] == '!delgoto' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['delgoto']['level']:
                 if line.split(sar['command'])[1]:
@@ -2899,8 +2993,9 @@ class LogParser(object):
 
             # maps - display all available maps
             elif (sar['command'] == '!maps' or sar['command'] == '@maps') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['maps']['level']:
+                # Get all available maps
                 map_list = self.game.get_all_maps()
-                msg = "^7Available Maps [^9%s^7]: ^7%s" % (len(map_list), ', ^7'.join(map_list))
+                msg = "^7Available Maps [^9%s^7] watch liste maps at lafumisterie.net/q3ut4 !" % len(map_list)
                 self.tell_say_message(sar, msg)
 
             # maprestart - restart the map
