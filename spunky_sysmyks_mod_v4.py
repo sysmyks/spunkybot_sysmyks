@@ -50,6 +50,7 @@ import lib.pygeoip as pygeoip
 import lib.schedule as schedule
 from lib.pyquake3 import PyQuake3
 from datetime import datetime
+import time as ntime
 
 # Get an instance of a logger
 logger = logging.getLogger('spunkybot')
@@ -92,7 +93,7 @@ COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usag
             'walljumps': {'desc': 'walljumps', 'syntax': '^7Usage: ^9!walljumps or !wall',  'level': 20, 'short': 'wall'},
             
             # moderator commands, level 20
-            'download': {'desc': 'download', 'syntax': '^7Usage: ^9!download <map>', 'level': 40},
+            
             'g_stamina': {'desc': 'g_stamina 1 or 2', 'syntax': '^7Usage: ^9!g_stamina', 'level': 40},
             'g_walljump': {'desc': 'g_walljump', 'syntax': '^7Usage: ^9!g_walljump', 'level': 40},
             'admintest': {'desc': 'display current admin status', 'syntax': '^7Usage: ^9!admintest', 'level': 40},
@@ -117,6 +118,9 @@ COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usag
             'setgoto': {'desc': 'set goto point', 'syntax': '^7Usage: ^9!setgoto <jump name>', 'level': 40},
             'setmapinfo': {'desc': 'set info for a map', 'syntax': '^7Usage: ^9!setmapinfo <mapname> <difficulty> <num_jumps> <author(s)>', 'level': 40},
             'delmapinfo': {'desc': 'del info for a map', 'syntax': '^7Usage: ^9!delmapinfo <mapname>', 'level': 40},
+            'delmap': {'desc': 'Delete a map from mapcycle', 'syntax': '^7Usage: ^9!delmap <mapname>', 'level': 40},
+            'download': {'desc': 'download', 'syntax': '^7Usage: ^9!download <map>', 'level': 40},
+            
 
             # admin commands, level 40
             'admins': {'desc': 'list all the online admins', 'syntax': '^7Usage: ^9!admins', 'level': 40},
@@ -1806,10 +1810,10 @@ class LogParser(object):
                 else:
                     self.game.rcon_tell(sar['player_num'], "^7You are not registered! ^7Please ^9!register ^7to use this command.")
 
-            # time - display the servers current time
             elif sar['command'] in ('!time', '@time'):
-                msg = "^7%s" % time.strftime("%H:%M", time.localtime(time.time()))
-                self.tell_say_message(sar, msg)
+                current_time = ntime.strftime("%H:%M", ntime.localtime())
+                msg = "^7Current server time: ^9%s" % current_time
+                self.game.rcon_tell(sar['player_num'], msg)
 
             # spec - move yourself to spectator
             elif sar['command'] in ('!spec', '!sp'): 
@@ -2194,6 +2198,38 @@ class LogParser(object):
                 # Recharger le serveur si nécessaire
                 if reload:
                     self.game.send_rcon('reload')
+            
+            elif sar['command'] == '!delmap' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['delmap']['level']:
+                if line.split(sar['command'])[1]:
+                    map_name = line.split(sar['command'])[1].strip()
+                    # Vérifier si la map existe
+                    found, map_name, msg = self.map_found(map_name)
+                    if not found:
+                        self.game.rcon_tell(sar['player_num'], msg)
+                    else:
+                        try:
+                            # Lire le contenu actuel du fichier mapcycle.txt
+                            with open(self.mapcycleway, 'r') as f:
+                                maps = f.readlines()
+                            
+                            # Filtrer pour retirer la map
+                            maps = [m.strip() for m in maps if m.strip() != map_name]
+                            
+                            # Réécrire le fichier sans la map
+                            with open(self.mapcycleway, 'w') as f:
+                                f.write('\n'.join(maps) + '\n')
+                            
+                            # Mettre à jour la liste des maps en mémoire
+                            if map_name in self.game.maplist:
+                                self.game.maplist.remove(map_name)
+                            
+                            self.game.rcon_tell(sar['player_num'], "^7Map ^9{map_name} ^7removed from mapcycle")
+                            # Recharger la config du serveur
+                            self.game.send_rcon('reload')
+                        except Exception as e:
+                            self.game.rcon_tell(sar['player_num'], "^8Error removing map: {e}")
+                else:
+                    self.game.rcon_tell(sar['player_num'], "^7Usage: !delmap <mapname>")
             
             # Commande !setgoto
             elif sar['command'] == '!setgoto' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['setgoto']['level']:
@@ -2995,8 +3031,19 @@ class LogParser(object):
             elif (sar['command'] == '!maps' or sar['command'] == '@maps') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['maps']['level']:
                 # Get all available maps
                 map_list = self.game.get_all_maps()
-                msg = "^7Available Maps [^9%s^7] watch liste maps at lafumisterie.net/q3ut4 !" % len(map_list)
-                self.tell_say_message(sar, msg)
+                msg1 = "^7Available Maps [^9%s^7] watch liste maps at lafumisterie.net/q3ut4 !" % len(map_list)
+                self.tell_say_message(sar, msg1)
+                
+                # Get next 10 maps
+                current_map = self.get_current_map()
+                if current_map in self.game.maplist:
+                    current_index = self.game.maplist.index(current_map)
+                    next_maps = []
+                    for i in range(5):
+                        next_index = (current_index + i + 1) % len(self.game.maplist)
+                        next_maps.append(self.game.maplist[next_index])
+                    msg2 = "^7Next maps: ^9%s" % ', '.join(next_maps)
+                    self.tell_say_message(sar, msg2)
 
             # maprestart - restart the map
             elif (sar['command'] == '!maprestart' or sar['command'] == '!restart') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['maprestart']['level']:
