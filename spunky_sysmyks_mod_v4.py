@@ -13,7 +13,7 @@ Spunky Bot is a lightweight game server administration bot and RCON tool,
 inspired by the eb2k9 bot by Shawn Haggard.
 The purpose of Spunky Bot is to administrate an Urban Terror 4.1 / 4.2 / 4.3
 server and provide statistics data for players.
-
+²
 ## Configuration ##
 Modify the UrT server config as follows:
  * seta g_logsync "1"
@@ -191,7 +191,8 @@ COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usag
             'ts': {'desc': 'change gametype to Team Survivor', 'syntax': '^7Usage: ^9!ts', 'level': 90},
             'ungroup': {'desc': 'remove admin level from a player', 'syntax': '^7Usage: ^9!ungroup ^7<name>', 'level': 90},
             'password': {'desc': 'set private server password', 'syntax': '^7Usage: ^9!password ^7[<password>]', 'level': 90},
-            'reload': {'desc': 'reload map', 'syntax': '^7Usage: ^9!reload', 'level': 90}}
+            'reload': {'desc': 'reload map', 'syntax': '^7Usage: ^9!reload', 'level': 90},
+            'cvarmap': {'desc': 'Set cvar for the current map', 'syntax': '^7!cvarmap <^8cvar^7> <^8value^7>', 'level': 90}}
 
 REASONS = {'obj': 'go for objective',
            'camp': 'stop camping',
@@ -235,6 +236,9 @@ class LogParser(object):
         self.serverdemos_file = CONFIG.get('server', 'serverdemos')
         self.load_records()
         self.mapcycleway = CONFIG.get('server', 'mapcycle')
+        self.custom_cvars_path = os.path.join(HOME, 'mod/map_cvars')
+        if not os.path.exists(self.custom_cvars_path):
+            os.makedirs(self.custom_cvars_path)
         # hit zone support for UrT > 4.2.013
         self.hit_points = {0: "HEAD", 1: "HEAD", 2: "HELMET", 3: "TORSO", 4: "VEST", 5: "LEFT_ARM", 6: "RIGHT_ARM",
                            7: "GROIN", 8: "BUTT", 9: "LEFT_UPPER_LEG", 10: "RIGHT_UPPER_LEG", 11: "LEFT_LOWER_LEG",
@@ -820,6 +824,48 @@ class LogParser(object):
                 except OSError as e:
                     logger.error('Error deleting demo file {}: {}'.format(demo, e))
     
+        # Add these new methods
+    def save_map_cvar(self, map_name, cvar, value):
+        """Save custom cvar for a specific map"""
+        map_file = os.path.join(self.custom_cvars_path, "%s.cfg" % map_name)
+        try:
+            # Read existing cvars
+            cvars = {}
+            if os.path.exists(map_file):
+                with open(map_file, 'r') as f:
+                    for line in f:
+                        if '=' in line:
+                            k, v = line.strip().split('=')
+                            cvars[k.strip()] = v.strip()
+            
+            # Add or update cvar
+            cvars[cvar] = value
+            
+            # Save back to file
+            with open(map_file, 'w') as f:
+                for k, v in cvars.items():
+                    f.write("%s=%s\n" % (k, v))
+            return True
+        except Exception as e:
+            logger.error("Error saving map cvar: %s" % e)
+            return False
+
+    def load_map_cvars(self, map_name):
+        """Load and apply custom cvars for a map"""
+        map_file = os.path.join(self.custom_cvars_path, "%s.cfg" % map_name)
+        if os.path.exists(map_file):
+            try:
+                with open(map_file, 'r') as f:
+                    for line in f:
+                        if '=' in line:
+                            cvar, value = line.strip().split('=')
+                            self.game.send_rcon('%s %s' % (cvar, value))
+                logger.info("Applied custom cvars for map: %s" % map_name)
+                return True
+            except Exception as e:
+                logger.error("Error loading map cvars: %s" % e)
+        return False
+    
     def parse_line(self, string):
         """
         parse the logfile and search for specific action
@@ -962,6 +1008,11 @@ class LogParser(object):
         # allow nextmap votes
         self.allow_nextmap_vote = True
         self.failed_vote_timer = 0
+        # Charger les cvars spécifiques à la nouvelle map
+        current_map = self.get_current_map()
+        if current_map:
+            self.load_map_cvars(current_map)
+        
 
     def handle_spawn(self, line):
         """
@@ -974,8 +1025,10 @@ class LogParser(object):
             self.game.players[player_num].set_alive(True)
             if player.get_welcome_msg():  
                 self.game.send_rcon("spoof %s regainstamina" % (player_name))
+                # Charger les cvars de la map seulement au premier spawn d'un joueur
                 if self.game.get_number_players() <= 1:
                     self.game.send_rcon("timelimit 0")
+                    
                 
     
     def handle_flagcapturetime(self, line):
@@ -997,6 +1050,7 @@ class LogParser(object):
         """
         logger.debug("Warmup... %s", line)
         self.allow_cmd_teams = True
+        
 
     def handle_initround(self, _):
         """
@@ -1862,6 +1916,7 @@ class LogParser(object):
                                 self.tell_say_message(sar, msg)
                                 return
                             else:
+                                self.game.send_rcon("stopserverdemo %s " % (self.game.players[sar['player_num']].get_name()))
                                 self.game.send_rcon("spoof %s noclip" % (self.game.players[sar['player_num']].get_name()))
                                 return
                 else:
@@ -3099,6 +3154,26 @@ class LogParser(object):
             # cyclemap - start next map in rotation
             elif sar['command'] == '!cyclemap' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['cyclemap']['level']:
                 self.game.send_rcon('cyclemap')
+
+            elif sar['command'] == '!cvarmap' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['cvarmap']['level']:
+                if line.split(sar['command'])[1]:
+                    args = line.split(sar['command'])[1].strip().split()
+                    if len(args) >= 2:
+                        cvar = args[0]
+                        value = args[1]
+                        current_map = self.get_current_map()
+                        
+                        # Save cvar for the current map
+                        if self.save_map_cvar(current_map, cvar, value):
+                            # Apply cvar immediately
+                            self.game.send_rcon('%s %s' % (cvar, value))
+                            self.game.rcon_tell(sar['player_num'], "^7Custom cvar ^9%s ^7set to ^9%s ^7for map ^9%s" % (cvar, value, current_map))
+                        else:
+                            self.game.rcon_tell(sar['player_num'], "^8Error saving custom cvar")
+                    else:
+                        self.game.rcon_tell(sar['player_num'], COMMANDS['customcvar']['syntax'])
+                else:
+                    self.game.rcon_tell(sar['player_num'], COMMANDS['customcvar']['syntax'])
 
             # setnextmap - set the given map as nextmap
             elif sar['command'] == '!setnextmap' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['setnextmap']['level']:
