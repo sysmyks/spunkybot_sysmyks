@@ -1843,23 +1843,36 @@ class LogParser(object):
                     self.game.rcon_tell(sar['player_num'], "^7You are not registered! ^7Please ^9!register ^7to use this command.")
             
             # mapinfo
+            # update mapinfo function
             elif sar['command'] == '!mapinfo':
                 if self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['mapinfo']['level']:
-                    current_map = self.get_current_map()
-                    if current_map:
-                        map_info = self.get_map_info(current_map)
-            
-                        if map_info:
-                            author = map_info['author']
-                            jumps = map_info['jumps']
-                            difficulty = map_info['difficulty'][0]
-                
-                            msg = "^9Map Info: ^7{}\n^9Author: ^7{}\n^9Jumps: ^7{}\n^9Difficulty: ^7{}/100".format(current_map, map_info['author'], map_info['jumps'], map_info['difficulty'][0])
+                    # Check if a map name is provided
+                    if line.split(sar['command'])[1]:
+                        requested_map = line.split(sar['command'])[1].strip()
+                        # Verify if map exists
+                        found, map_name, error_msg = self.map_found(requested_map)
+                        if not found:
+                            msg = error_msg
                         else:
-                            msg = "^8No information available for {}.".format(current_map)
+                            map_info = self.get_map_info(map_name)
+                            if map_info:
+                                msg = "^9Map Info: ^7{}\n^9Author: ^7{}\n^9Jumps: ^7{}\n^9Difficulty: ^7{}/100".format(
+                                    map_name, map_info['author'], map_info['jumps'], map_info['difficulty'][0])
+                            else:
+                                msg = "^8No information available for {}.".format(map_name)
                     else:
-                        msg = "^8Unable to retrieve current map."
-                    # Envoie la reponse au joueur
+                        # No map specified, use current map
+                        current_map = self.get_current_map()
+                        if current_map:
+                            map_info = self.get_map_info(current_map)
+                            if map_info:
+                                msg = "^9Map Info: ^7{}\n^9Author: ^7{}\n^9Jumps: ^7{}\n^9Difficulty: ^7{}/100".format(
+                                    current_map, map_info['author'], map_info['jumps'], map_info['difficulty'][0])
+                            else:
+                                msg = "^8No information available for {}.".format(current_map)
+                        else:
+                            msg = "^8Unable to retrieve current map."
+                    # Send response to player
                     self.tell_say_message(sar, msg)
                 else:
                     self.game.rcon_tell(sar['player_num'], "^7You are not registered! ^7Please ^9!register ^7to use this command.")
