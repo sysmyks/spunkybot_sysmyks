@@ -11,15 +11,14 @@
 - Required Python modules (install using `pip`).
 
 - **Python 2.7** for SpunkyBot.  
-  `
-   unidecode  
-   wget  
-   sqlite3  
-   ConfigParser
-  `
+  `unidecode`
+   `wget`  
+   `sqlite3`  
+   `ConfigParser`
+  
 
 - **Python 3** for the translation module.  
-   openai  
+   `openai`  
 
 ## Configuration
 1. Set up your **OpenAI API key** in `mod/translation.py` (line 7):
