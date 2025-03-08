@@ -11,7 +11,7 @@
 - Required Python modules (install using `pip`).
 
 - **Python 2.7** for SpunkyBot.  
-  `unidecode`
+  `unidecode`  
    `wget`  
    `sqlite3`  
    `ConfigParser`
