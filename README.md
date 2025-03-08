@@ -11,10 +11,12 @@
 - Required Python modules (install using `pip`).
 
 - **Python 2.7** for SpunkyBot.  
+  ```
    unidecode  
    wget  
    sqlite3  
-   ConfigParser  
+   ConfigParser
+  ```
 
 - **Python 3** for the translation module.  
    openai  
