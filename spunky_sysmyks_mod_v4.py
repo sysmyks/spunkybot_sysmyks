@@ -123,6 +123,8 @@ COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usag
             
 
             # admin commands, level 40
+            'sendmessage': {'desc': 'sendmessage specifique player', 'syntax': '^7Usage: ^9!sendmessage', 'level': 40},
+            'delmessage': {'desc': 'delmessage specifique player', 'syntax': '^7Usage: ^9!delmessage', 'level': 40},
             'admins': {'desc': 'list all the online admins', 'syntax': '^7Usage: ^9!admins', 'level': 40},
             'afk': {'desc': 'force a player to spec, because he is away from keyboard', 'syntax': '^7Usage: ^9!afk ^7<name>', 'level': 40},
             'aliases': {'desc': 'list the aliases of a player', 'syntax': '^7Usage: ^9!aliases ^7<name>', 'level': 40, 'short': 'alias'},
@@ -1227,6 +1229,7 @@ class LogParser(object):
             elif player.get_first_time() and player.get_welcome_msg():
                 self.game.rcon_tell(player_num, "^7Welcome %s, this must be your first visit, you are player ^7#%s^7. ^7Type ^9!help ^7in chat for help" % (player_name, player_id))
                 player.disable_welcome_msg()
+            self.check_pending_messages(player)
             logger.debug("ClientBegin: Player %d %s has entered the game", player_num, player_name)
 
 
@@ -2617,6 +2620,23 @@ class LogParser(object):
                     self.game.send_rcon('stopserverdemo %s' % arg)
 
 ## admin level 40
+            # Ajoutez ces deux nouveaux gestionnaires de commande dans la méthode handle_say
+            elif sar['command'] == '!sendmessage' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['sendmessage']['level']:
+                parts = line.split(sar['command'])[1].strip().split(' ', 1)
+                if len(parts) == 2:
+                    recipient = parts[0]
+                    message = parts[1]
+                    self.add_pending_message(sar, recipient, message)
+                else:
+                    self.game.rcon_tell(sar['player_num'], COMMANDS['sendmessage']['syntax'])
+
+            elif sar['command'] == '!delmessage' and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['delmessage']['level']:
+                if line.split(sar['command'])[1]:
+                    recipient = line.split(sar['command'])[1].strip()
+                    self.delete_pending_messages(sar, recipient)
+                else:
+                    self.game.rcon_tell(sar['player_num'], COMMANDS['delmessage']['syntax'])
+            
             # admins - list all the online admins
             elif (sar['command'] == '!admins' or sar['command'] == '@admins') and self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['admins']['level']:
                 msg = self.get_admins_online()
@@ -3679,6 +3699,207 @@ class LogParser(object):
                 cap_count = player.get_flags_captured()
                 self.game.send_rcon("^7%s has captured ^9%s ^7flag%s" % (player_name, cap_count, 's' if cap_count > 1 else ''))
                 logger.debug("Player %d %s captured the flag", player_num, player_name)
+
+    # Ajout des fonctions pour gérer les messages
+    def add_pending_message(self, sar, recipient_name, message):
+        """
+        Ajoute un message qui sera délivré quand le joueur se connectera
+        """
+        # Rechercher d'abord parmi les joueurs connectés
+        found, victim, msg = self.player_found(recipient_name)
+        recipient_info = None
+        
+        if found:
+            # Joueur trouvé en ligne
+            recipient_info = {
+                'id': victim.get_player_id(),
+                'name': victim.get_name(),
+                'guid': victim.get_guid(),
+                'ip': victim.get_ip_address()
+            }
+        else:
+            # Joueur non connecté, rechercher dans la base de données
+            try:
+                # Recherche avec une correspondance partielle du nom
+                curs.execute("SELECT `id`, `name`, `guid`, `ip_address` FROM `player` WHERE `name` LIKE '%{}%' ORDER BY `time_joined` DESC LIMIT 1".format(recipient_name))
+                result = curs.fetchone()
+                
+                if result:
+                    recipient_info = {
+                        'id': result[0],
+                        'name': result[1],
+                        'guid': result[2],
+                        'ip': result[3] if result[3] else 'unknown'
+                    }
+                    self.game.rcon_tell(sar['player_num'], "^7Player ^9{} ^7found in database.".format(recipient_info['name']))
+                else:
+                    self.game.rcon_tell(sar['player_num'], "^7Player not found: {}".format(recipient_name))
+                    return
+            except Exception as e:
+                logger.error("Error searching player in database: %s", e)
+                self.game.rcon_tell(sar['player_num'], "^8Error searching player: {}".format(e))
+                return
+        
+        # Créer le message
+        sender_name = self.game.players[sar['player_num']].get_name()
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+        
+        # Charger les messages existants
+        pending_messages = {}
+        messages_file = os.path.join(self.base_path, 'mod', "pending_messages.json")
+        
+        if os.path.exists(messages_file):
+            try:
+                with open(messages_file, 'r') as file:
+                    pending_messages = json.load(file)
+            except json.JSONDecodeError:
+                pending_messages = {}
+        
+        # Trouver l'identifiant du joueur
+        recipient_key = None
+        for key in pending_messages:
+            if (pending_messages[key]['guid'] == recipient_info['guid'] or 
+                pending_messages[key]['name'].lower() == recipient_info['name'].lower()):
+                recipient_key = key
+                break
+        
+        # Créer une nouvelle entrée si le joueur n'existe pas dans le fichier
+        if not recipient_key:
+            recipient_key = str(recipient_info['id'])
+            pending_messages[recipient_key] = {
+                'guid': recipient_info['guid'],
+                'name': recipient_info['name'], 
+                'ip': recipient_info['ip'],
+                'messages': []
+            }
+        
+        # Ajouter le message
+        pending_messages[recipient_key]['messages'].append({
+            'sender': sender_name,
+            'message': message,
+            'timestamp': timestamp
+        })
+        
+        # Sauvegarder dans le fichier JSON
+        try:
+            with open(messages_file, 'w') as file:
+                json.dump(pending_messages, file, indent=4)
+            self.game.rcon_tell(sar['player_num'], "^7Message for ^9{} ^7saved. It will be delivered on next connection.".format(recipient_info['name']))
+        except Exception as e:
+            self.game.rcon_tell(sar['player_num'], "^8Error saving message: {}".format(e))
+
+    def delete_pending_messages(self, sar, recipient_name):
+        """
+        Supprimer tous les messages en attente pour un joueur
+        """
+        # D'abord, essayons de trouver le joueur parmi les connectés
+        found, victim, msg = self.player_found(recipient_name)
+        recipient_info = None
+        
+        if found:
+            recipient_info = {
+                'id': victim.get_player_id(),
+                'name': victim.get_name(),
+                'guid': victim.get_guid()
+            }
+        else:
+            # Joueur non connecté, rechercher dans la base de données
+            try:
+                curs.execute("SELECT `id`, `name`, `guid` FROM `player` WHERE `name` LIKE '%{}%' ORDER BY `time_joined` DESC LIMIT 1".format(recipient_name))
+                result = curs.fetchone()
+                
+                if result:
+                    recipient_info = {
+                        'id': result[0],
+                        'name': result[1],
+                        'guid': result[2]
+                    }
+                    self.game.rcon_tell(sar['player_num'], "^7Player ^9{} ^7found in database.".format(recipient_info['name']))
+            except Exception as e:
+                logger.error("Error searching player in database: %s", e)
+        
+        # Charger les messages existants
+        messages_file = os.path.join(self.base_path, 'mod', "pending_messages.json")
+        if not os.path.exists(messages_file):
+            self.game.rcon_tell(sar['player_num'], "^7No pending messages")
+            return
+        
+        try:
+            with open(messages_file, 'r') as file:
+                pending_messages = json.load(file)
+        except json.JSONDecodeError:
+            pending_messages = {}
+        
+        # Trouver l'identifiant du joueur
+        recipient_key = None
+        for key in pending_messages:
+            if recipient_info and (pending_messages[key]['guid'] == recipient_info['guid']):
+                recipient_key = key
+                break
+            elif pending_messages[key]['name'].lower() == recipient_name.lower():
+                recipient_key = key
+                break
+        
+        if recipient_key:
+            player_name = pending_messages[recipient_key]['name']
+            del pending_messages[recipient_key]
+            # Sauvegarder le fichier mis à jour
+            try:
+                with open(messages_file, 'w') as file:
+                    json.dump(pending_messages, file, indent=4)
+                self.game.rcon_tell(sar['player_num'], "^7All pending messages for ^9{} ^7have been deleted.".format(player_name))
+            except Exception as e:
+                self.game.rcon_tell(sar['player_num'], "^8Error deleting messages: {}".format(e))
+        else:
+            self.game.rcon_tell(sar['player_num'], "^7No pending messages found for player {}".format(recipient_name))
+
+    def check_pending_messages(self, player):
+        """
+        Check and deliver pending messages for the player
+        """
+        messages_file = os.path.join(self.base_path, 'mod', "pending_messages.json")
+        if not os.path.exists(messages_file):
+            return
+        
+        try:
+            with open(messages_file, 'r') as file:
+                pending_messages = json.load(file)
+        except json.JSONDecodeError:
+            return
+        
+        # Check if player has messages
+        player_guid = player.get_guid()
+        player_name = player.get_name()
+        player_id = str(player.get_player_id())
+        
+        # Look for the player by guid, name or ID
+        recipient_key = None
+        for key in pending_messages:
+            if (pending_messages[key]['guid'] == player_guid or 
+                pending_messages[key]['name'].lower() == player_name.lower() or
+                key == player_id):
+                recipient_key = key
+                break
+        
+        if recipient_key:
+            messages = pending_messages[recipient_key]['messages']
+            if messages:
+                # Send an initial message to notify the player
+                self.game.rcon_tell(player.get_player_num(), "^9You have {} pending message(s):".format(len(messages)))
+                
+                # Send each message
+                for msg in messages:
+                    # Fixed line that was causing the error
+                    time_obj = datetime.strptime(msg['timestamp'], "%Y-%m-%d %H:%M:%S")
+                    time_format = time_obj.strftime("%d-%m %H:%M")
+                    self.game.rcon_tell(player.get_player_num(), "^7[^9{}^7] from ^9{}: ^7{}".format(time_format, msg['sender'], msg['message']))
+                
+                # Delete messages now that they've been delivered
+                del pending_messages[recipient_key]
+                
+                # Save the updated file
+                with open(messages_file, 'w') as file:
+                    json.dump(pending_messages, file, indent=4)
 
     def handle_bomb(self, line):
         """
