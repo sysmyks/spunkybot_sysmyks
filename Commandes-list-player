@@ -2,7 +2,7 @@
  !register :    register yourself as a basic user ,        Usage:  !register   
  !regtest :    display current user status ,               Usage:  !regtest   
  !spec :    move yourself to spectator ,                   Usage:  !spec, !sp    
- !play :    move yourself to spectator ,                   Usage:  !play, !pl    
+ !play :    move yourself to player ,                   Usage:  !play, !pl    
  !msgadmin :    send a message to the admin ,              Usage:  !msgadmin <text>   
  !goto :    Goto to a specific jump ,                      Usage:  !goto 
  !glist :    Displays maps saved locations ,               Usage:  !glist 
