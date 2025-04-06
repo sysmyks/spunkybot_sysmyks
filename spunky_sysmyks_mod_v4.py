@@ -2087,17 +2087,42 @@ class LogParser(object):
                 msg = "^7Current server time: ^9%s" % current_time
                 self.game.rcon_tell(sar['player_num'], msg)
 
+            # Dans la partie handle_say pour la commande !msgadmin
             elif sar['command'] == '!msgadmin':
                 if self.game.players[sar['player_num']].get_admin_role() >= COMMANDS['msgadmin']['level']:
                     if line.split(sar['command'])[1]:
                         message = line.split(sar['command'])[1].strip()
-                        # Use the existing add_pending_message function but with "sysmyks" as a fixed recipient
-                        self.add_pending_message(sar, "sysmyks", message)
-                        self.game.rcon_tell(sar['player_num'], "^7Your message has been sent to the administrator.")
+                        
+                        # Trouver tous les admins avec un niveau élevé (par exemple 80+)
+                        admin_found = False
+                        for player in self.game.players.itervalues():
+                            if player.get_admin_role() >= 80:  # Niveau senior admin ou supérieur
+                                # Envoyer le message à cet admin
+                                self.add_pending_message(sar, player.get_name(), message)
+                                admin_found = True
+                        
+                        # Si aucun admin de haut niveau n'est trouvé dans la liste des joueurs actuels
+                        # Chercher le dernier admin connecté, ou à défaut utiliser "admin" comme fallback
+                        if not admin_found:
+                            if self.last_admin:
+                                recipient = self.last_admin.get_name()
+                            else:
+                                # Rechercher un admin dans la base de données
+                                try:
+                                    curs.execute("SELECT `name` FROM `xlrstats` WHERE `admin_role` >= 80 ORDER BY `last_played` DESC LIMIT 1")
+                                    result = curs.fetchone()
+                                    recipient = result[0] if result else "admin"  # Fallback si aucun admin trouvé
+                                except Exception as e:
+                                    logger.error("Error searching admin in database: %s", e)
+                                    recipient = "admin"  # Fallback en cas d'erreur
+                            
+                            self.add_pending_message(sar, recipient, message)
+                        
+                        self.game.rcon_tell(sar['player_num'], "^7Your message has been sent to administrators.")
                     else:
                         self.game.rcon_tell(sar['player_num'], COMMANDS['msgadmin']['syntax'])
                 else:
-                    self.game.rcon_tell(sar['player_num'], "^7You are not allowed to use this command")
+                    self.game.rcon_tell(sar['player_num'], "^7You are not authorized to use this command")
             
             # spec - move yourself to spectator
             elif sar['command'] in ('!spec', '!sp'): 
