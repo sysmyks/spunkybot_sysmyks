@@ -1,0 +1,25 @@
+ !help :    display all available commands ,               Usage:  !help , !h  
+ !register :    register yourself as a basic user ,        Usage:  !register   
+ !regtest :    display current user status ,               Usage:  !regtest   
+ !spec :    move yourself to spectator ,                   Usage:  !spec, !sp    
+ !play :    move yourself to spectator ,                   Usage:  !play, !pl    
+ !msgadmin :    send a message to the admin ,              Usage:  !msgadmin <text>   
+ !goto :    Goto to a specific jump ,                      Usage:  !goto 
+ !glist :    Displays maps saved locations ,               Usage:  !glist 
+ !time :    display the current server time ,              Usage:  !time 
+ !ready :    start timer mod ,                             Usage:  !ready, !r
+ !regainstamina :    active regainstamina ,                Usage:  !regainstamina , !rgs  
+ !allowgoto :    active your goto ,                        Usage:  !allowgoto, !alg 
+ !!transl :    translate into all languages ,              Usage:  !transl <lang> <text>, !tr <lang> <text>
+ !maps :    display all available maps ,                   Usage:  !maps 
+ !votecycle :    Vote on cycling to the next map ,         Usage:  !votecyclemap, !vc
+ !votemap :    Callvote on changing current map ,          Usage:  !votemap <mapname>, !vm <mapname> 
+ !nextmap :    display the next map in rotation ,          Usage:  !nextmap 
+ !votenextmap :    Callvote on setting next map ,          Usage:  !votenextmap <mapname>, !vn <mapname>
+ !drop :    drop your stuff ,                              Usage:  !drop, !dr  
+ !mapinfo :    map info ,                                  Usage:  !mapinfo, !mapinfo <mapname> 
+ !topruns :    display 3 records runs ,                    Usage:  !topruns 
+ !top :    display your records ,                          Usage:  !top 
+ !noclip :    noclip ,                                     Usage:  !noclip,!n
+ !stamina :    stamina ,                                   Usage:  !stamina, !stam  
+ !walljumps :    walljumps ,                               Usage:  !walljumps, !wall  
