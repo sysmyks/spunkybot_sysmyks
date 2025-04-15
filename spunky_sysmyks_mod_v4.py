@@ -69,7 +69,7 @@ RCON_DELAY = 0.3
 COMMANDS = {'help': {'desc': 'display all available commands', 'syntax': '^7Usage: ^9!help', 'level': 0, 'short': 'h'},
             'register': {'desc': 'register yourself as a basic user', 'syntax': '^7Usage: ^9!register', 'level': 0},
             # user commands, level 1
-            'regtest': {'desc': 'display current user status', 'syntax': '^7Usage: ^9!regtest', 'level': 1},
+            'regtest': {'desc': 'display current user status', 'syntax': '^7Usage: ^9!regtest', 'level': 20},
             'spec': {'desc': 'move yourself to spectator', 'syntax': '^7Usage: ^9!spec or !sp', 'level': 20, 'short': 'sp'},
             'play': {'desc': 'move yourself to spectator', 'syntax': '^7Usage: ^9!play or !pl', 'level': 20, 'short': 'pl'},
             'msgadmin': {'desc': 'send a message to the admin', 'syntax': '^7Usage: ^9!msgadmin <text>', 'level': 20},
